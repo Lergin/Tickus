@@ -1,0 +1,52 @@
+<dom-module id="tickets-ticket-comment">
+    <link rel="import" type="css" href="tickets-ticket-comment.css">
+
+    <template>
+        <div>
+            <div class="card-content">
+                <div class="sitebar">
+                    <img class="avatar" src="[[_computeAvatarUrl(author.uid)]]" alt="[[author.name]]" />
+                    <div><a href="[[_computeProfileUrl(author.uid)]]">[[author.name]]</a></div>
+                    <div class="small">[[_computeDate(date)]]</div>
+                    <div>
+                        <paper-icon-button icon="delete"></paper-icon-button>
+                        <paper-icon-button icon="create"></paper-icon-button>
+                    </div>
+                </div>
+
+                <span>[[content]]</span>
+            </div>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'tickets-ticket-comment',
+            properties: {
+                author: {
+                    type: Object,
+                    value: {
+                        name: 'Malte',
+                        uid: 21345
+                    }
+                },
+                date: {
+                    type: 'String',
+                    value: new Date()
+                },
+                content: {
+                    type: 'String',
+                    value: 'Jemand hat einfach so meinen Server in die liste eingetragen! Ich will das das sofort Raus genommen wird.. Das ist echt Scheiße.. (https://minecraft-server.eu/server/index/112761/black_air) Es ist meine Server IP!!!! Da Hoster beweis!! -> http://prntscr.com/8rlp9o Nemmt ihn Razs!!!Jemand hat einfach so meinen Server in die liste eingetragen! Ich will das das sofort Raus genommen wird.. Das ist echt Scheiße.. (https://minecraft-server.eu/server/index/112761/black_air) Es ist meine Server IP!!!! Da Hoster beweis!! -> http://prntscr.com/8rlp9o Nemmt ihn Razs!!!'
+                }
+            },
+            _computeDate: function(date) {
+                return (new Date(date)).toLocaleString();
+            },
+            _computeProfileUrl: function(uid) {
+                return 'https://minecraft-server.eu/forum/members/' + uid;
+            },
+            _computeAvatarUrl: function(uid) {
+                return 'https://minecraft-server.eu/forum/avatar.php?userid=' + uid;
+            }
+        });
+    </script>
+</dom-module>

@@ -1,0 +1,51 @@
+<script src="../bower_components/page/page.js"></script>
+<script>
+  window.addEventListener('WebComponentsReady', function() {
+
+    page('/', function () {
+      app.route = 'openTickets';
+      app.selectedStatus = ['wip', 'todo', 'waiting'];
+      app.scrollPageToTop();
+    });
+
+    page('/todo', function () {
+      app.route = 'todoTickets';
+      app.selectedStatus = ['todo'];
+      app.scrollPageToTop();
+    });
+
+    page('/ticket/:id', function (data) {
+      app.route = 'ticket';
+      app.params = data.params;
+      app.scrollPageToTop();
+    });
+
+    page('/ready', function () {
+      app.route = 'readyTickets';
+      app.selectedStatus = ['ready'];
+      app.scrollPageToTop();
+    });
+
+    page('/wip', function () {
+      app.route = 'wipTickets';
+      app.selectedStatus = ['wip'];
+      app.scrollPageToTop();
+    });
+
+    page('/waiting', function () {
+      app.route = 'waitingTickets';
+      app.selectedStatus = ['waiting'];
+      app.scrollPageToTop();
+    });
+
+    page('/all', function () {
+      app.route = 'allTickets';
+      app.selectedStatus = '';
+      app.scrollPageToTop();
+    });
+
+    page({
+      hashbang: false
+    });
+  });
+</script>

@@ -1,0 +1,36 @@
+.avatar {
+    display: inline-block;
+    height: 64px;
+    width: 64px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    color: white;
+    line-height: 64px;
+    font-size: 30px;
+    text-align: center;
+}
+
+a {
+    text-decoration: none;
+}
+
+.sitebar {
+    float: left;
+    margin-right: 10px;
+}
+
+.sitebar img {
+    margin-left: calc((100% - 64px) / 2);
+}
+
+.sitebar div {
+    text-align: center;
+}
+
+::host {
+    display: block;
+}
+
+.card-content {
+    overflow:hidden;
+}
