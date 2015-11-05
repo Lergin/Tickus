@@ -114,14 +114,15 @@
             },
             addComment: function() {
                 var comment = {};
-                comment.author = {};
-                comment.author.name = 'Max';
-                comment.author.uid = 65449;
-                comment.date = new Date();
-                comment.content = this.answer;
-                this.answer = '';
+            //    comment.author = {};
+            //    comment.author.name = 'Max';
+            //    comment.author.uid = 65449;
 
-                createComment(this.ticket._id, comment)
+
+                createComment(this.ticket._id, this.answer)
+
+            //    comment.content = this.answer;
+                this.answer = '';
 
                 this.commentsChange();
             },
@@ -139,7 +140,7 @@
                 return 'https://minecraft-server.eu/forum/members/' + uid;
             },
             _computeAvatarUrl: function(uid) {
-                return 'https://minecraft-server.eu/forum/avatar.php?userid=' + uid;
+                return 'https://minecraft-server.eu/forum/avatar.php?userid=' + uid + '&size=m';
             },
             selectTag: function(e){
                 var name = e.target.title;

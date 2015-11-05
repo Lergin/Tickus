@@ -2,6 +2,9 @@
     "port": 4000,
     "mongodb": {
         "url": "mongodb://localhost:27017/ticketsystem",
-        "collection": "tickets"
+        "collections": {
+            "tickets": "tickets",
+            "user": "user"
+        }
     }
 }

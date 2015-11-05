@@ -9,7 +9,8 @@ var assert = require( 'assert' );
 var ObjectId = require( 'mongodb' ).ObjectID;
 
 var url = conf.mongodb.url;
-var ticketCollection = conf.mongodb.collection;
+var ticketCollection = conf.mongodb.collections.tickets;
+var userCollection = conf.mongodb.collections.user;
 
 var ticket = {
     'date': new Date(),
@@ -73,7 +74,7 @@ var updateTicket = function ( id, key, value, callback ) {
     } );
 };
 
-var createTicket = function ( ticket, callback ) {
+var createTicket = function ( ticket, user, callback ) {
     MongoClient.connect( url, function ( err, db ) {
         assert.equal( null, err );
 
@@ -88,7 +89,12 @@ var createTicket = function ( ticket, callback ) {
     } );
 };
 
-var createComment = function ( id, comment, callback ) {
+var createComment = function ( id, commentContent, user, callback ) {
+    comment = {};
+    comment.content = commentContent;
+    comment.date = new Date();
+    comment.author = user;
+
     MongoClient.connect( url, function ( err, db ) {
         assert.equal( null, err );
 
@@ -104,7 +110,10 @@ var createComment = function ( id, comment, callback ) {
         }, function ( err, results ) {
             assert.equal( err, null );
             log( 'created Comment for ' + id );
-            callback( results )
+            callback({
+                'id' : id,
+                'comment' : comment
+            })
             db.close();
         } );
     } );
@@ -125,11 +134,11 @@ var findAllComments = function ( callback ) {
     } );
 };
 
-var changeStatus = function( id, status, callback){
+var changeStatus = function( id, status, user, callback){
     updateTicket( id, 'status', status, callback);
 }
 
-var addTag = function( id, tag, callback){
+var addTag = function( id, tag, user, callback){
     MongoClient.connect( url, function ( err, db ) {
         assert.equal( null, err );
 
@@ -151,7 +160,8 @@ var addTag = function( id, tag, callback){
         } );
     } );
 }
-var removeTag = function( id, tag, callback){
+
+var removeTag = function( id, tag, user, callback){
     MongoClient.connect( url, function ( err, db ) {
         assert.equal( null, err );
 
@@ -171,6 +181,68 @@ var removeTag = function( id, tag, callback){
             callback( results )
             db.close();
         } );
+    } );
+}
+
+var removeComment = function( id, tag, user, callback){
+    MongoClient.connect( url, function ( err, db ) {
+        assert.equal( null, err );
+
+        var newData = {};
+        newData[ "tags" ] = tag;
+
+        db.collection( ticketCollection ).updateOne( {
+            "_id": ObjectId( id )
+        }, {
+            $pull: newData,
+            $currentDate: {
+                "lastModified": true
+            }
+        }, function ( err, results ) {
+            assert.equal( err, null );
+            log('removed Tag ' + tag + ' to ' + id);
+            callback( results )
+            db.close();
+        } );
+    } );
+}
+var getUser = function( uid, callback){
+    MongoClient.connect( url, function ( err, db ) {
+        assert.equal( null, err );
+
+        assert.equal( null, err );
+        db.collection( userCollection ).findOne(
+            {'uid' : uid },
+             function(err, result){
+                 callback( err, result );
+             }
+         );
+    } );
+}
+
+var addUser = function( uid, name, group, callback){
+    MongoClient.connect( url, function ( err, db ) {
+        assert.equal( null, err );
+
+        var user = {
+            "uid": uid,
+            "name": name,
+            "group": group
+        };
+
+        db.collection( userCollection ).insertOne(
+            user,
+            function ( err, result ) {
+                if(err){
+                    log('user (' + uid + ') already added');
+                }else{
+                    assert.equal( err, null );
+                    log( 'added a user (' + uid + ')' );
+                    callback( result );
+                }
+                db.close();
+            }
+        );
     } );
 }
 
@@ -211,27 +283,50 @@ function log( message, type ) {
     console.log( '[' + ( type || 'I' ) + '] ' + new Date().toTimeString().substring( 0, 8 ) + ' ' + message );
 }
 
+
+
+MongoClient.connect( url, function ( err, db ) {
+    assert.equal( null, err );
+
+    db.collection( userCollection ).createIndex( { "uid": 1 }, { unique: true } )
+} );
+
+
+
+//addUser(50251, "manf", "Admin", function(){});
+//addUser(2903, "Malte", "Admin", function(){});
+//addUser(11954, "Mario", "User", function(){});
+
+
 io.sockets.on( 'connection', function ( socket ) {
+
+    socket.user = {}
+
+    getUser(50251, function(err, result){
+        socket.user = result;
+    });
+
+
     socket.on( 'new comment', function ( data ) {
-        createComment( data.id , data.comment , function () {
-            io.sockets.emit( 'new comment', data);
+        createComment( data.id , data.comment, socket.user , function (result) {
+            io.sockets.emit( 'new comment', result);
         } );
     } );
 
     socket.on( 'add tag', function ( data ) {
-        addTag( data.id , data.tag , function () {
+        addTag( data.id , data.tag, socket.user , function () {
             io.sockets.emit( 'add tag', data);
         } );
     } );
 
     socket.on( 'remove tag', function ( data ) {
-        removeTag( data.id , data.tag , function () {
+        removeTag( data.id , data.tag, socket.user , function () {
             io.sockets.emit( 'remove tag', data);
         } );
     } );
 
     socket.on( 'change status', function ( data ) {
-        changeStatus( data.id , data.status , function () {
+        changeStatus( data.id , data.status, socket.user , function () {
             io.sockets.emit( 'change status', data);
         } );
     } );

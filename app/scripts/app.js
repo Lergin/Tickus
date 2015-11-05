@@ -36,6 +36,7 @@ var socket;
     } );
 
     socket.on( 'new comment', function ( data ) {
+        console.log(data)
         var i;
         for ( i in app.tickets ) {
             if ( app.tickets[ i ]._id == data.id ) {

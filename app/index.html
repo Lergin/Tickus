@@ -47,12 +47,12 @@
                 </paper-toolbar>
 
                 <paper-menu class="list" attr-for-selected="data-route" selected="[[route]]">
-                    <a data-route="openTickets" href="/" rel="no-refresh" on-click="onDataRouteClick">
+                    <a data-route="openTickets" href="/" on-click="onDataRouteClick">
                         <span class="badge">4</span>
                         <span>offene Tickets</span>
                     </a>
 
-                    <a data-route="todoTickets" href="/todo" rel="no-refresh" on-click="onDataRouteClick">
+                    <a data-route="todoTickets" href="/todo" on-click="onDataRouteClick">
                         <span class="badge">1</span>
                         <span>zu bearbeitende Tickets</span>
                     </a>
@@ -67,7 +67,7 @@
                         <span>warten auf Rückmeldung</span>
                     </a>
 
-                    <a data-route="readyTickets" href="/ready" rel="no-refresh" on-click="onDataRouteClick">
+                    <a data-route="readyTickets" href="/ready" on-click="onDataRouteClick">
                         <span class="badge">24</span>
                         <span>bearbeitet Tickets</span>
                     </a>
@@ -127,7 +127,7 @@
                     <iron-pages selected="0">
                         <section>
                             <template id="ticketsTemplate" is="dom-repeat" items="{{tickets}}" as="ticket"
-                            filter="{{ticketFilter(selectedTag, search, selectedStatus)}}" sort="sortStatus" observe="tags status">
+                            filter="{{ticketFilter(selectedTag, search, selectedStatus)}}" sort="sortDate" observe="tags status">
                                 <tickets-ticket ticket="{{ticket}}"></tickets-ticket>
                             </template>
                         </section>
