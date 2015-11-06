@@ -12,45 +12,6 @@ var url = conf.mongodb.url;
 var ticketCollection = conf.mongodb.collections.tickets;
 var userCollection = conf.mongodb.collections.user;
 
-var ticket = {
-    'date': new Date(),
-    'author': {
-        'name': 'Malte',
-        'uid': '29403'
-    },
-    'status': 'wip',
-    'title': 'TITEL!!!',
-    'tags': [
-        'Forum',
-        '@Admins',
-        'WTF its working'
-    ],
-    'comments': [ {
-        'author': {
-            'name': 'Malte',
-            'uid': '29403'
-        },
-        'date': new Date( "2014-11-01T00:00:00Z" ),
-        'content': 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
-    }, {
-        'author': {
-            'name': 'Malte',
-            'uid': '29403'
-        },
-        'date': new Date( "2014-10-03T00:00:00Z" ),
-        'content': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
-    }, {
-        'author': {
-            'name': 'Malte',
-            'uid': '29403'
-        },
-        'date': new Date( "2014-10-01T00:00:00Z" ),
-        'content': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
-    } ],
-    'lastModified': new Date()
-};
-
-
 var updateTicket = function ( id, key, value, callback ) {
     MongoClient.connect( url, function ( err, db ) {
         assert.equal( null, err );
@@ -74,7 +35,20 @@ var updateTicket = function ( id, key, value, callback ) {
     } );
 };
 
-var createTicket = function ( ticket, user, callback ) {
+var createTicket = function ( title, message, user, callback ) {
+    var ticket = {
+        'date': new Date(),
+        'author': user,
+        'status': 'todo',
+        'title': title,
+        'comments': [ {
+            'author': user,
+            'date': new Date(),
+            'content': message
+        }],
+        'lastModified': new Date()
+    };
+
     MongoClient.connect( url, function ( err, db ) {
         assert.equal( null, err );
 
@@ -82,7 +56,11 @@ var createTicket = function ( ticket, user, callback ) {
             ticket,
             function ( err, result ) {
                 assert.equal( err, null );
+
                 log( 'added a ticket' );
+
+                io.sockets.emit('ticket', ticket);
+
                 callback( result );
             }
         );
@@ -206,6 +184,7 @@ var removeComment = function( id, tag, user, callback){
         } );
     } );
 }
+
 var getUser = function( uid, callback){
     MongoClient.connect( url, function ( err, db ) {
         assert.equal( null, err );
@@ -246,8 +225,6 @@ var addUser = function( uid, name, group, callback){
     } );
 }
 
-//createTicket( ticket, function () {} );
-
 var comment = {
     author: {
         name: 'Malte',
@@ -268,7 +245,7 @@ app.get( '/', function ( req, res ) {
     res.sendfile( __dirname + '/dev/index.html' );
 } );
 
-app.get( /(wip|todo|waiting|all|ready|ticket)/ , function ( req, res ) {
+app.get( /(wip|todo|waiting|all|ready|ticket|open|create)/ , function ( req, res ) {
     res.sendfile( __dirname + '/dev/index.html' );
 } );
 
@@ -299,13 +276,16 @@ MongoClient.connect( url, function ( err, db ) {
 
 
 io.sockets.on( 'connection', function ( socket ) {
-
     socket.user = {}
 
     getUser(50251, function(err, result){
         socket.user = result;
     });
 
+
+    socket.on( 'new ticket', function ( data ) {
+        createTicket(data.title, data.content, socket.user, function(){});
+    } );
 
     socket.on( 'new comment', function ( data ) {
         createComment( data.id , data.comment, socket.user , function (result) {

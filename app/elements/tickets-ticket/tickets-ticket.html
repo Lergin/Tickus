@@ -113,15 +113,8 @@
                 this.$.collapse.toggle();
             },
             addComment: function() {
-                var comment = {};
-            //    comment.author = {};
-            //    comment.author.name = 'Max';
-            //    comment.author.uid = 65449;
-
-
                 createComment(this.ticket._id, this.answer)
 
-            //    comment.content = this.answer;
                 this.answer = '';
 
                 this.commentsChange();
@@ -144,6 +137,11 @@
             },
             selectTag: function(e){
                 var name = e.target.title;
+
+                if(!this.ticket.tags){
+                    this.ticket.tags = [];
+                }
+
                 if (this.ticket.tags.indexOf(name) === -1) {
                     addTag(this.ticket._id, name);
                 }else{

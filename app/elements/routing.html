@@ -3,43 +3,56 @@
   window.addEventListener('WebComponentsReady', function() {
 
     page('/', function () {
+      app.route = 'addTicket';
+      app.page = "add";
+      app.scrollPageToTop();
+    });
+
+    page('/open', function () {
       app.route = 'openTickets';
+      app.page = "view";
       app.selectedStatus = ['wip', 'todo', 'waiting'];
       app.scrollPageToTop();
     });
 
     page('/todo', function () {
       app.route = 'todoTickets';
+      app.page = "view";
       app.selectedStatus = ['todo'];
       app.scrollPageToTop();
     });
 
     page('/ticket/:id', function (data) {
       app.route = 'ticket';
+      app.page = "view";
       app.params = data.params;
       app.scrollPageToTop();
     });
 
     page('/ready', function () {
       app.route = 'readyTickets';
+      app.page = "view";
       app.selectedStatus = ['ready'];
       app.scrollPageToTop();
     });
 
     page('/wip', function () {
       app.route = 'wipTickets';
+      app.page = "view";
       app.selectedStatus = ['wip'];
       app.scrollPageToTop();
     });
 
     page('/waiting', function () {
       app.route = 'waitingTickets';
+      app.page = "view";
       app.selectedStatus = ['waiting'];
       app.scrollPageToTop();
     });
 
     page('/all', function () {
       app.route = 'allTickets';
+      app.page = "view";
       app.selectedStatus = '';
       app.scrollPageToTop();
     });

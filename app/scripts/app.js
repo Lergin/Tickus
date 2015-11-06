@@ -24,6 +24,10 @@ var socket;
         }
     }
 
+    app.addTicket = function() {
+        addTicket(app.new_title, app.new_content);
+    }
+
     socket = io();
 
     app.tickets = [];
@@ -36,7 +40,6 @@ var socket;
     } );
 
     socket.on( 'new comment', function ( data ) {
-        console.log(data)
         var i;
         for ( i in app.tickets ) {
             if ( app.tickets[ i ]._id == data.id ) {
@@ -61,6 +64,10 @@ var socket;
         var i;
         for ( i in app.tickets ) {
             if ( app.tickets[ i ]._id === data.id ) {
+                if(!app.tickets[ i ].tags){
+                    app.tickets[ i ].tags = [];
+                }
+
                 app.push( 'tickets.' + i + '.tags', data.tag );
                 break;
             }
@@ -84,6 +91,15 @@ var socket;
 
 } )( document );
 
+
+addTicket = function ( title, content ) {
+    socket.emit( 'new ticket', {
+        title: title,
+        content: content
+    } );
+
+    app.page = "view"
+}
 
 createComment = function ( ticketid, comment ) {
     socket.emit( 'new comment', {

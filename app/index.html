@@ -47,7 +47,11 @@
                 </paper-toolbar>
 
                 <paper-menu class="list" attr-for-selected="data-route" selected="[[route]]">
-                    <a data-route="openTickets" href="/" on-click="onDataRouteClick">
+                    <a data-route="addTickets" href="/" on-click="onDataRouteClick">
+                        <span>Ticket hinzufügen</span>
+                    </a>
+
+                    <a data-route="openTickets" href="/open" on-click="onDataRouteClick">
                         <span class="badge">4</span>
                         <span>offene Tickets</span>
                     </a>
@@ -114,6 +118,7 @@
                             <div data-route="waitingTickets" class="app-name">warten auf Rückmeldung</div>
                             <div data-route="readyTickets" class="app-name">bearbeitet Tickets</div>
                             <div data-route="allTickets" class="app-name">alle Tickets</div>
+                            <div data-route="addTicket" class="app-name">Ticket hinzufügen</div>
                         </iron-pages>
                     </div>
 
@@ -124,12 +129,26 @@
                 </paper-toolbar>
 
                 <div class="content">
-                    <iron-pages selected="0">
-                        <section>
+                    <iron-pages selected="{{page}}" attr-for-selected="type">
+                        <section type="view">
                             <template id="ticketsTemplate" is="dom-repeat" items="{{tickets}}" as="ticket"
                             filter="{{ticketFilter(selectedTag, search, selectedStatus)}}" sort="sortDate" observe="tags status">
                                 <tickets-ticket ticket="{{ticket}}"></tickets-ticket>
                             </template>
+                        </section>
+
+                        <section id="addTicket" type="add">
+                            <paper-card style="width:100%">
+
+                                <div class="card-content">
+                                    <paper-input label="Title" value="{{new_title}}" char-counter auto-validate minlength="6" maxlength="50" error-message="6-20 Zeichen"></paper-input>
+                                    <paper-textarea label="Content" value="{{new_content}}" char-counter auto-validate rows="10" minlength="100" error-message="min. 100 Zeichen"></paper-textarea>
+                                </div>
+
+                                <div class="card-actions">
+                                    <paper-button on-tap="addTicket">Hinzufügen</paper-button>
+                                </div>
+                            </paper-card>
                         </section>
                     </iron-pages>
                 </div>
