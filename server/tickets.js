@@ -3,11 +3,15 @@ var MongoClient = require( 'mongodb' ).MongoClient,
     ObjectId = require( 'mongodb' ).ObjectID,
     logger = require( './logger.js' ),
     conf = require( '../config.json' ),
+    users = require( './users.js' ),
     url = conf.mongodb.url,
     collection = conf.mongodb.collections.tickets;
 
 module.exports = {
     createTicket: function ( title, message, user, callback ) {
+        if(!users.hasPermission(user, "ticket.create"))
+            return;
+
         var ticket = {
             'date': new Date(),
             'author': user,
@@ -32,7 +36,7 @@ module.exports = {
                     logger.verbose( 'added ticket' , {
                         ticket: ticket._id,
                         user: user._id,
-                        ticket: ticket
+                        ticketContent: ticket
                     });
 
                     callback( ticket );
@@ -41,6 +45,9 @@ module.exports = {
         } );
     },
     createComment: function ( id, commentContent, user, callback ) {
+        if(!users.hasPermission(user, "ticket.comment.create"))
+            return;
+
         comment = {
             'content': commentContent,
             'date': new Date(),
@@ -91,9 +98,15 @@ module.exports = {
         } );
     },
     changeStatus: function ( id, status, user, callback ) {
+        if(!users.hasPermission(user, "ticket.status.change"))
+            return;
+
         updateTicket( id, 'status', user, status, callback );
     },
     addTag: function ( id, tag, user, callback ) {
+        if(!users.hasPermission(user, "ticket.tag.add"))
+            return;
+
         MongoClient.connect( url, function ( err, db ) {
             assert.equal( null, err );
 
@@ -122,6 +135,9 @@ module.exports = {
         } );
     },
     removeTag: function ( id, tag, user, callback ) {
+        if(!users.hasPermission(user, "ticket.tag.remove"))
+            return;
+
         MongoClient.connect( url, function ( err, db ) {
             assert.equal( null, err );
 

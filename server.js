@@ -25,7 +25,7 @@ app.get( /(wip|todo|waiting|all|ready|ticket|open|create)/, function ( req, res 
 io.sockets.on( 'connection', function ( socket ) {
     socket.user = {}
 
-    users.get( 29403, function ( err, result ) {
+    users.get( 111954, function ( err, result ) {
         socket.user = result;
         logger.verbose( "new Connection", { user: result._id });
     } );
@@ -63,7 +63,7 @@ io.sockets.on( 'connection', function ( socket ) {
 
     tickets.findAllComments( function ( data ) {
         if ( data != null ) {
-            socket.emit( 'ticket', data );
+            socket.emit( 'load init tickets', data );
         }
     } );
 } );

@@ -31,7 +31,18 @@ var socket;
     socket = io();
 
     app.tickets = [];
+    var hasInitTickets = false;
 
+    socket.on( 'load init tickets', function ( data ) {
+        if(!hasInitTickets){
+            hasInitTickets = true;
+            app.push(
+                'tickets',
+                data
+            );
+        }
+    } );
+    
     socket.on( 'ticket', function ( data ) {
         app.push(
             'tickets',

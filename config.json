@@ -27,5 +27,23 @@
             "level": "verbose",
             "db": "mongodb://localhost:27017/ticketsystem"
         }
+    },
+    "groups": {
+        "User": {
+            "ticket.create": true,
+            "ticket.comment.create": true,
+            "ticket.status.change": false,
+            "ticket.tag.add": false,
+            "ticket.tag.remove": false,
+            "user.add": false
+        },
+        "Admin": {
+            "ticket.create": true,
+            "ticket.comment.create": true,
+            "ticket.status.change": true,
+            "ticket.tag.add": true,
+            "ticket.tag.remove": true,
+            "user.add": true
+        }
     }
 }

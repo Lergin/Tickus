@@ -31,7 +31,10 @@ module.exports = {
             );
         } );
     },
-    add: function ( uid, name, group, callback ) {
+    add: function ( uid, name, group, creator, callback ) {
+        if(!hasPermission(creator, "user.add"))
+            return;
+
         MongoClient.connect( url, function ( err, db ) {
             assert.equal( null, err );
 
@@ -46,12 +49,15 @@ module.exports = {
                 function ( err, result ) {
                     if ( err ) {
                         logger.verbose( 'user already added', {
-                            uid: uid
+                            uid: uid,
+                            creator: creator._id
                         } );
                     } else {
                         assert.equal( err, null );
                         logger.verbose( 'added a user', {
-                            uid: uid
+                            newUser: user,
+                            newUid: uid,
+                            creator: creator._id
                         } );
                         callback( result );
                     }
@@ -59,5 +65,8 @@ module.exports = {
                 }
             );
         } );
+    },
+    hasPermission: function(user, permission){
+        return conf.groups[user.group] && conf.groups[user.group][permission];
     }
 }
