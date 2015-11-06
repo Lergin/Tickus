@@ -6,5 +6,26 @@
             "tickets": "tickets",
             "user": "user"
         }
+    },
+    "logger": {
+        "file": {
+            "filename": "logs/ticketsystem.log",
+            "level": "verbose",
+            "handleExceptions": true,
+            "humanReadableUnhandledException": true,
+            "zippedArchive": true,
+            "silent": true
+        },
+        "console": {
+            "level": "debug",
+            "colorize": true,
+            "timestamp": true,
+            "handleExceptions": true,
+            "humanReadableUnhandledException": true
+        },
+        "mongodb": {
+            "level": "verbose",
+            "db": "mongodb://localhost:27017/ticketsystem"
+        }
     }
 }
