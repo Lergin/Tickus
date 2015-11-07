@@ -47,9 +47,11 @@
                 </paper-toolbar>
 
                 <paper-menu class="list" attr-for-selected="data-route" selected="[[route]]">
-                    <a data-route="addTickets" href="/" on-click="onDataRouteClick">
-                        <span>Ticket hinzufügen</span>
-                    </a>
+                    <template is="dom-if" if="_hasPermission('ticket_create')">
+                        <a data-route="addTickets" href="/" on-click="onDataRouteClick">
+                            <span>Ticket hinzufügen</span>
+                        </a>
+                    </template>
 
                     <a data-route="openTickets" href="/open" on-click="onDataRouteClick">
                         <span class="badge">[[computeTicketCount(ticketCount.todo, ticketCount.wip, ticketCount.waiting)]]</span>
@@ -139,15 +141,20 @@
 
                         <section id="addTicket" type="add">
                             <paper-card style="width:100%">
+                                <template is="dom-if" if="[[_hasPermission('comment_create')]]">
+                                    <div class="card-content">
+                                        <paper-input label="Title" value="{{new_title}}" char-counter auto-validate minlength="6" maxlength="50" error-message="6-20 Zeichen"></paper-input>
+                                        <paper-textarea label="Content" value="{{new_content}}" char-counter auto-validate rows="10" minlength="100" error-message="min. 100 Zeichen"></paper-textarea>
+                                    </div>
 
-                                <div class="card-content">
-                                    <paper-input label="Title" value="{{new_title}}" char-counter auto-validate minlength="6" maxlength="50" error-message="6-20 Zeichen"></paper-input>
-                                    <paper-textarea label="Content" value="{{new_content}}" char-counter auto-validate rows="10" minlength="100" error-message="min. 100 Zeichen"></paper-textarea>
-                                </div>
+                                    <div class="card-actions">
+                                        <paper-button on-tap="addTicket">Hinzufügen</paper-button>
+                                    </div>
+                                </template>
 
-                                <div class="card-actions">
-                                    <paper-button on-tap="addTicket">Hinzufügen</paper-button>
-                                </div>
+                                <template is="dom-if" if="[[!_hasPermission('comment_create')]]">
+                                    Not enought rights
+                                </template>
                             </paper-card>
                         </section>
                     </iron-pages>

@@ -9,7 +9,7 @@ var MongoClient = require( 'mongodb' ).MongoClient,
 
 module.exports = {
     createTicket: function ( title, message, user, callback ) {
-        if(!users.hasPermission(user, 'ticket.create'))
+        if(!users.hasPermission(user, 'ticket_create'))
             return;
 
         var ticket = {
@@ -46,7 +46,7 @@ module.exports = {
         } );
     },
     createComment: function ( id, commentContent, user, callback ) {
-        if(!users.hasPermission(user, 'ticket.comment.create'))
+        if(!users.hasPermission(user, 'ticket_comment_create'))
             return;
 
         comment = {
@@ -105,13 +105,13 @@ module.exports = {
         })
     },
     changeStatus: function ( id, status, user, callback ) {
-        if(!users.hasPermission(user, 'ticket.status.change'))
+        if(!users.hasPermission(user, 'ticket_status_change'))
             return;
 
         updateTicket( id, 'status', user, status, callback );
     },
     addTag: function ( id, tag, user, callback ) {
-        if(!users.hasPermission(user, 'ticket.tag.add'))
+        if(!users.hasPermission(user, 'ticket_tag_add'))
             return;
 
         MongoClient.connect( url, function ( err, db ) {
@@ -142,7 +142,7 @@ module.exports = {
         } );
     },
     removeTag: function ( id, tag, user, callback ) {
-        if(!users.hasPermission(user, 'ticket.tag.remove'))
+        if(!users.hasPermission(user, 'ticket_tag_remove'))
             return;
 
         MongoClient.connect( url, function ( err, db ) {

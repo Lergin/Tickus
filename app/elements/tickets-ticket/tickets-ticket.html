@@ -24,15 +24,14 @@
                         <tickets-ticket-comment date="[[comment.date]]" author="[[comment.author]]" content="[[comment.content]]"></tickets-ticket-comment>
                         <hr>
                     </template>
-
-                    <div class="card-content answer">
-                        <paper-textarea label="Antwort" value="{{answer}}"></paper-textarea>
-                        <paper-button raised on-tap="addComment">Senden</paper-button>
-                    </div>
+                    <template if="[[_hasPermission('ticket_comment_create')]]">
+                        <div class="card-content answer">
+                            <paper-textarea label="Antwort" value="{{answer}}"></paper-textarea>
+                            <paper-button raised on-tap="addComment">Senden</paper-button>
+                        </div>
+                    </template>
                 </div>
             </iron-collapse>
-
-
 
             <div class="card-actions">
                 <paper-fab id="expand" mini icon="[[_computeFabItem(collapse-open)]]" on-tap="openComments"></paper-fab>
@@ -43,29 +42,32 @@
                     <paper-button toggles on-tap="statusChange" data-status="ready" disabled$="[[isStatus(ticket.status, 'ready')]]">Erledigt</paper-button>
                 </iron-selector>
             </div>
+
             <div class="card-actions">
                 <template is="dom-repeat" items="[[ticket.tags]]" as="tag">
                     <paper-chip disabled>
                         <h1>[[tag]]</h1>
                     </paper-chip>
                 </template>
+                <template is="dom-if" if="[[_hasPermission('ticket_tag_change')]]">
+                    <paper-menu-button ignore-select class="addtag">
+                        <paper-icon-button icon="add" class="dropdown-trigger"></paper-icon-button>
+                        <paper-menu class="dropdown-content" multi attr-for-selected="title" selected-values$='[[ticket.tags]]' on-tap="selectTag" >
+                            <paper-item title="Forum">Forum</paper-item>
+                            <paper-item title="@Admins">@Admins</paper-item>
+                            <paper-item title="Serverliste">Serverliste</paper-item>
+                            <paper-item title="Account">Account</paper-item>
+                            <paper-item title="@Entwicklung">@Entwicklung</paper-item>
+                            <paper-item title="Übertragung">Übertragung</paper-item>
+                            <paper-item title="Verwarnung">Verwarnung</paper-item>
+                            <paper-item title="Frage">Frage</paper-item>
+                            <!--    <template is="dom-repeat" items="[[tags]]" as="tag">
+                                <paper-item name="[[tag]]">[[tag]]</paper-item>
+                            </template>-->
+                        </paper-menu>
+                    </paper-menu-button>
+                </template>
 
-                <paper-menu-button ignore-select class="addtag">
-                    <paper-icon-button icon="add" class="dropdown-trigger"></paper-icon-button>
-                    <paper-menu class="dropdown-content" multi attr-for-selected="title" selected-values$='[[ticket.tags]]' on-tap="selectTag" >
-                        <paper-item title="Forum">Forum</paper-item>
-                        <paper-item title="@Admins">@Admins</paper-item>
-                        <paper-item title="Serverliste">Serverliste</paper-item>
-                        <paper-item title="Account">Account</paper-item>
-                        <paper-item title="@Entwicklung">@Entwicklung</paper-item>
-                        <paper-item title="Übertragung">Übertragung</paper-item>
-                        <paper-item title="Verwarnung">Verwarnung</paper-item>
-                        <paper-item title="Frage">Frage</paper-item>
-                        <!--    <template is="dom-repeat" items="[[tags]]" as="tag">
-                            <paper-item name="[[tag]]">[[tag]]</paper-item>
-                        </template>-->
-                    </paper-menu>
-                </paper-menu-button>
             </div>
         </paper-card>
     </template>
@@ -96,7 +98,7 @@
                 'commentsChange(ticket.comments.*)'
             ],
             isStatus: function(status, test) {
-                return status === test;
+                return status === test || !this._hasPermission('ticket_status_change');
             },
             commentsChange: function() {
                 if(this.ticket.comments){
@@ -134,6 +136,9 @@
             },
             _computeAvatarUrl: function(uid) {
                 return 'https://minecraft-server.eu/forum/avatar.php?userid=' + uid + '&size=m';
+            },
+            _hasPermission: function(permission){
+                return app._hasPermission(permission);
             },
             selectTag: function(e){
                 var name = e.target.title;

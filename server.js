@@ -28,11 +28,15 @@ app.get( /(wip|todo|waiting|all|ready|ticket|open|create)/, function ( req, res 
 io.sockets.on( 'connection', function ( socket ) {
     socket.user = {}
 
-    users.get( 111954, function ( err, result ) {
+    users.get( 29403, function ( err, result ) {
         socket.user = result;
         logger.verbose( "new Connection", { user: socket.user._id });
 
-        if(users.hasPermission(socket.user, 'ticket.view.all')){
+        socket.user.permissions = conf.groups[socket.user.group];
+
+        socket.emit( 'account info', socket.user);
+
+        if(users.hasPermission(socket.user, 'ticket_view_all')){
             tickets.findAllTickets( function ( data ) {
                 if ( data != null ) {
                     socket.emit( 'load init tickets', data );
@@ -43,7 +47,7 @@ io.sockets.on( 'connection', function ( socket ) {
                     socket.emit( 'ticketCount', status, amount );
                 }
             } );
-        }else if(users.hasPermission(socket.user, 'ticket.view.own')){
+        }else if(users.hasPermission(socket.user, 'ticket_view_own')){
             tickets.findOwnTickets( socket.user, function ( data ) {
                 if ( data != null ) {
                     socket.emit( 'load init tickets', data );

@@ -36,6 +36,12 @@ var socket;
         addTicket(app.new_title, app.new_content);
     }
 
+    app._hasPermission = function(permission) {
+        if(app.user){
+            return app.user.permissions[permission];
+        }
+    }
+
     socket = io();
 
     app.tickets = [];
@@ -59,6 +65,11 @@ var socket;
             'tickets',
             data
         );
+    } );
+
+    socket.on( 'account info', function ( data ) {
+        app.user = data;
+        console.log(data);
     } );
 
     socket.on( 'ticketCount', function ( status, amount ) {

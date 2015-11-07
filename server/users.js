@@ -32,7 +32,7 @@ module.exports = {
         } );
     },
     add: function ( uid, name, group, creator, callback ) {
-        if(!hasPermission(creator, "user.add"))
+        if(!hasPermission(creator, "user_add"))
             return;
 
         MongoClient.connect( url, function ( err, db ) {

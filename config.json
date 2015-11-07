@@ -30,18 +30,17 @@
     },
     "groups": {
         "User": {
-            "ticket.create": true,
-            "ticket.view.own": true
+            "ticket_view_own": true,
+            "ticket_create": true
         },
         "Admin": {
-            "ticket.create": true,
-            "ticket.comment.create": true,
-            "ticket.status.change": true,
-            "ticket.tag.add": true,
-            "ticket.tag.remove": true,
-            "ticket.view.all": true,
-            "ticket.view.own": true,
-            "user.add": true
+            "ticket_create": true,
+            "ticket_comment_create": true,
+            "ticket_status_change": true,
+            "ticket_tag_change": false,
+            "ticket_view_all": true,
+            "ticket_view_own": true,
+            "user_add": true
         }
     },
     "status": [
