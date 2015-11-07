@@ -36,7 +36,7 @@
 
             <div class="card-actions">
                 <paper-fab id="expand" mini icon="[[_computeFabItem(collapse-open)]]" on-tap="openComments"></paper-fab>
-                <iron-selector selected="{{ticket.status}}" selected-attribute="active" selected-attribute="disabled" attr-for-selected="data-status">
+                <iron-selector selected="[[ticket.status]]" selected-attribute="active" selected-attribute="disabled" attr-for-selected="data-status">
                     <paper-button toggles on-tap="statusChange" data-status="todo" disabled$="[[isStatus(ticket.status, 'todo')]]">ToDo</paper-button>
                     <paper-button toggles on-tap="statusChange" data-status="wip" disabled$="[[isStatus(ticket.status, 'wip')]]">WIP</paper-button>
                     <paper-button toggles on-tap="statusChange" data-status="waiting" disabled$="[[isStatus(ticket.status, 'waiting')]]">Wartet auf Rückmeldung</paper-button>

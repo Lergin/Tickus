@@ -24,6 +24,14 @@ var socket;
         }
     }
 
+    app.computeTicketCount = function(){
+        var i, sum = 0;
+        for (i = 0; i < arguments.length; i++) {
+            sum += arguments[i];
+        }
+        return sum;
+    }
+
     app.addTicket = function() {
         addTicket(app.new_title, app.new_content);
     }
@@ -31,23 +39,30 @@ var socket;
     socket = io();
 
     app.tickets = [];
+    app.ticketCount = {};
     var hasInitTickets = false;
 
     socket.on( 'load init tickets', function ( data ) {
         if(!hasInitTickets){
-            hasInitTickets = true;
             app.push(
                 'tickets',
                 data
             );
+            setTimeout(function () {
+                hasInitTickets = true;
+            }, 10000);
         }
     } );
-    
+
     socket.on( 'ticket', function ( data ) {
         app.push(
             'tickets',
             data
         );
+    } );
+
+    socket.on( 'ticketCount', function ( status, amount ) {
+        app.set('ticketCount.' + status, amount);
     } );
 
     socket.on( 'new comment', function ( data ) {
@@ -64,8 +79,9 @@ var socket;
         var i;
         for ( i in app.tickets ) {
             if ( app.tickets[ i ]._id == data.id ) {
-                app.tickets[ i ].status = data.status;
-                app.notifyPath( "tickets." + i + ".status", data.status );
+                app.set('ticketCount.' + data.status, app.ticketCount[data.status] + 1);
+                app.set('ticketCount.' + app.tickets[i].status, app.ticketCount[app.tickets[i].status] - 1);
+                app.set( "tickets." + i + ".status", data.status );
                 break;
             }
         }

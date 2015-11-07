@@ -9,7 +9,7 @@ var MongoClient = require( 'mongodb' ).MongoClient,
 
 module.exports = {
     createTicket: function ( title, message, user, callback ) {
-        if(!users.hasPermission(user, "ticket.create"))
+        if(!users.hasPermission(user, 'ticket.create'))
             return;
 
         var ticket = {
@@ -32,6 +32,7 @@ module.exports = {
                 ticket,
                 function ( err, result ) {
                     assert.equal( err, null );
+                    db.close();
 
                     logger.verbose( 'added ticket' , {
                         ticket: ticket._id,
@@ -45,7 +46,7 @@ module.exports = {
         } );
     },
     createComment: function ( id, commentContent, user, callback ) {
-        if(!users.hasPermission(user, "ticket.comment.create"))
+        if(!users.hasPermission(user, 'ticket.comment.create'))
             return;
 
         comment = {
@@ -58,16 +59,17 @@ module.exports = {
             assert.equal( null, err );
 
             db.collection( collection ).updateOne( {
-                "_id": ObjectId( id )
+                '_id': ObjectId( id )
             }, {
                 $push: {
-                    "comments": comment
+                    'comments': comment
                 },
                 $currentDate: {
-                    "lastModified": true
+                    'lastModified': true
                 }
             }, function ( err, results ) {
                 assert.equal( err, null );
+                db.close();
 
                 logger.verbose( 'created Comment', {
                     ticket: id,
@@ -79,49 +81,55 @@ module.exports = {
                     'id': id,
                     'comment': comment
                 } )
-                db.close();
             } );
         } );
     },
-    findAllComments: function ( callback ) {
-        MongoClient.connect( url, function ( err, db ) {
-            assert.equal( null, err );
-            var cursor = db.collection( collection ).find();
-            cursor.each( function ( err, doc ) {
-                assert.equal( err, null );
-                if ( doc != null ) {
-                    callback( doc, null );
-                } else {
-                    callback( null, err );
-                }
-            } );
-        } );
+    findAllTickets: function ( callback ) {
+        findTickets({}, callback);
+    },
+    findOwnTickets: function ( user, callback ) {
+        findTickets({'author.uid' : user.uid}, callback);
+    },
+    countOwnTickets: function( user, callback ) {
+        conf.status.forEach(function(status){
+            countTickets({'status': status, 'author.uid': user.uid}, function(amount){
+                callback(status, amount)
+            });
+        })
+    },
+    countAllTickets: function( callback ) {
+        conf.status.forEach(function(status){
+            countTickets({'status': status}, function(amount){
+                callback(status, amount)
+            });
+        })
     },
     changeStatus: function ( id, status, user, callback ) {
-        if(!users.hasPermission(user, "ticket.status.change"))
+        if(!users.hasPermission(user, 'ticket.status.change'))
             return;
 
         updateTicket( id, 'status', user, status, callback );
     },
     addTag: function ( id, tag, user, callback ) {
-        if(!users.hasPermission(user, "ticket.tag.add"))
+        if(!users.hasPermission(user, 'ticket.tag.add'))
             return;
 
         MongoClient.connect( url, function ( err, db ) {
             assert.equal( null, err );
 
             var newData = {};
-            newData[ "tags" ] = tag;
+            newData[ 'tags' ] = tag;
 
             db.collection( collection ).updateOne( {
-                "_id": ObjectId( id )
+                '_id': ObjectId( id )
             }, {
                 $addToSet: newData,
                 $currentDate: {
-                    "lastModified": true
+                    'lastModified': true
                 }
             }, function ( err, results ) {
                 assert.equal( err, null );
+                db.close();
 
                 logger.verbose( 'added Tag', {
                     ticket: id,
@@ -130,29 +138,29 @@ module.exports = {
                 });
 
                 callback( results )
-                db.close();
             } );
         } );
     },
     removeTag: function ( id, tag, user, callback ) {
-        if(!users.hasPermission(user, "ticket.tag.remove"))
+        if(!users.hasPermission(user, 'ticket.tag.remove'))
             return;
 
         MongoClient.connect( url, function ( err, db ) {
             assert.equal( null, err );
 
             var newData = {};
-            newData[ "tags" ] = tag;
+            newData[ 'tags' ] = tag;
 
             db.collection( collection ).updateOne( {
-                "_id": ObjectId( id )
+                '_id': ObjectId( id )
             }, {
                 $pull: newData,
                 $currentDate: {
-                    "lastModified": true
+                    'lastModified': true
                 }
             }, function ( err, results ) {
                 assert.equal( err, null );
+                db.close();
 
                 logger.verbose( 'removed Tag', {
                     ticket: id,
@@ -161,7 +169,6 @@ module.exports = {
                 });
 
                 callback( results )
-                db.close();
             } );
         } );
     },
@@ -179,14 +186,15 @@ updateTicket = function ( id, key, user, value, callback ) {
         newData[ key ] = value;
 
         db.collection( collection ).updateOne( {
-            "_id": ObjectId( id )
+            '_id': ObjectId( id )
         }, {
             $set: newData,
             $currentDate: {
-                "lastModified": true
+                'lastModified': true
             }
         }, function ( err, results ) {
             assert.equal( err, null );
+            db.close();
 
             logger.verbose( 'updatet Ticket', {
                 ticket: id,
@@ -196,7 +204,30 @@ updateTicket = function ( id, key, user, value, callback ) {
             });
 
             callback( results )
-            db.close();
         } );
+    } );
+};
+
+findTickets = function (  query, callback ) {
+    MongoClient.connect( url, function ( err, db ) {
+        assert.equal( null, err );
+        var cursor = db.collection( collection ).find(query);
+        cursor.each( function ( err, doc ) {
+            assert.equal( err, null );
+            callback( doc );
+        } );
+    } );
+};
+
+countTickets = function (  query, callback ) {
+    MongoClient.connect( url, function ( err, db ) {
+        assert.equal( null, err );
+
+        db.collection(collection).count(query, function(error, num){
+            assert.equal( err, null );
+            db.close();
+
+            callback(num);
+        });
     } );
 };

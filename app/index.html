@@ -52,32 +52,32 @@
                     </a>
 
                     <a data-route="openTickets" href="/open" on-click="onDataRouteClick">
-                        <span class="badge">4</span>
+                        <span class="badge">[[computeTicketCount(ticketCount.todo, ticketCount.wip, ticketCount.waiting)]]</span>
                         <span>offene Tickets</span>
                     </a>
 
                     <a data-route="todoTickets" href="/todo" on-click="onDataRouteClick">
-                        <span class="badge">1</span>
+                        <span class="badge">[[ticketCount.todo]]</span>
                         <span>zu bearbeitende Tickets</span>
                     </a>
 
                     <a data-route="wipTickets" href="/wip" on-click="onDataRouteClick">
-                        <span class="badge">0</span>
+                        <span class="badge">[[ticketCount.wip]]</span>
                         <span>in Bearbeitung</span>
                     </a>
 
                     <a data-route="waitingTickets" href="/waiting" on-click="onDataRouteClick">
-                        <span class="badge">3</span>
+                        <span class="badge">[[ticketCount.waiting]]</span>
                         <span>warten auf Rückmeldung</span>
                     </a>
 
                     <a data-route="readyTickets" href="/ready" on-click="onDataRouteClick">
-                        <span class="badge">24</span>
+                        <span class="badge">[[ticketCount.ready]]</span>
                         <span>bearbeitet Tickets</span>
                     </a>
 
                     <a data-route="allTickets" href="/all" on-click="onDataRouteClick">
-                        <span class="badge">213</span>
+                        <span class="badge">{{computeTicketCount(ticketCount.todo, ticketCount.wip, ticketCount.waiting, ticketCount.ready)}}</span>
                         <span>Alle Tickets</span>
                     </a>
                 </paper-menu>

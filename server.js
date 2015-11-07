@@ -22,12 +22,39 @@ app.get( /(wip|todo|waiting|all|ready|ticket|open|create)/, function ( req, res 
 
 //users.add(29403, "Malte", "Admin", function(){});
 
+//admin : 29403
+//user : 111954
+
 io.sockets.on( 'connection', function ( socket ) {
     socket.user = {}
 
     users.get( 111954, function ( err, result ) {
         socket.user = result;
-        logger.verbose( "new Connection", { user: result._id });
+        logger.verbose( "new Connection", { user: socket.user._id });
+
+        if(users.hasPermission(socket.user, 'ticket.view.all')){
+            tickets.findAllTickets( function ( data ) {
+                if ( data != null ) {
+                    socket.emit( 'load init tickets', data );
+                }
+            } );
+            tickets.countAllTickets( function ( status, amount ) {
+                if ( amount != null ) {
+                    socket.emit( 'ticketCount', status, amount );
+                }
+            } );
+        }else if(users.hasPermission(socket.user, 'ticket.view.own')){
+            tickets.findOwnTickets( socket.user, function ( data ) {
+                if ( data != null ) {
+                    socket.emit( 'load init tickets', data );
+                }
+            } );
+            tickets.countOwnTickets( socket.user, function ( status, amount ) {
+                if ( amount != null ) {
+                    socket.emit( 'ticketCount', status, amount );
+                }
+            } );
+        }
     } );
 
 
@@ -59,12 +86,6 @@ io.sockets.on( 'connection', function ( socket ) {
         tickets.changeStatus( data.id, data.status, socket.user, function () {
             io.sockets.emit( 'change status', data );
         } );
-    } );
-
-    tickets.findAllComments( function ( data ) {
-        if ( data != null ) {
-            socket.emit( 'load init tickets', data );
-        }
     } );
 } );
 
