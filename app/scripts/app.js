@@ -19,7 +19,7 @@ var socket;
     app.ticketFilter = function ( tag, search, status ) {
         return function ( item ) {
             return ( item.title.match( search ) || item.author.name.match( search ) ) &&
-            ( tag === '' || item.tags.indexOf( tag ) > -1 )
+            ( tag === '' || (!(item.tags == undefined) && item.tags.indexOf( tag ) > -1 ) )
             && (status === '' || status.indexOf(item.status) > -1);
         }
     }

@@ -37,7 +37,7 @@
             "ticket_create": true,
             "ticket_comment_create": true,
             "ticket_status_change": true,
-            "ticket_tag_change": false,
+            "ticket_tag_change": true,
             "ticket_view_all": true,
             "ticket_view_own": true,
             "user_add": true
