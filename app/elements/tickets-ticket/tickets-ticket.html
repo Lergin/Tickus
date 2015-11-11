@@ -1,158 +1,169 @@
 <link rel="import" href="tickets-ticket-comment.html">
 <dom-module id="tickets-ticket">
-    <link rel="import" type="css" href="tickets-ticket.css">
-    <template>
-        <paper-card class$="[[ticket.status]]">
+	<link rel="import" type="css" href="tickets-ticket.css">
+	<template>
+		<paper-card class$="[[ticket.status]]">
 
-            <div class="card-content">
-                <div class="avatar">
-                    <img class="avatar" src="[[_computeAvatarUrl(ticket.author.uid)]]" alt="[[ticket.author.name]]" />
-                </div>
+			<div class="card-content">
+				<div class="avatar">
+					<img class="avatar" src="[[_computeAvatarUrl(ticket.author.uid)]]" alt="[[ticket.author.name]]"/>
+				</div>
 
-                <div class="title">
+				<div class="title">
 
-                    <div class="big">[[ticket.title]]</div>
-                    <div class="small"><a href="[[_computeProfileUrl(ticket.author.uid)]]">[[ticket.author.name]]</a> -
-                        <span>[[_computeDate(ticket.date)]]</span>
-                    </div>
-                </div>
-            </div>
+					<div class="big">[[ticket.title]]</div>
+					<div class="small"><a href="[[_computeProfileUrl(ticket.author.uid)]]">[[ticket.author.name]]</a> -
+						<span>[[_computeDate(ticket.date)]]</span>
+					</div>
+				</div>
+			</div>
 
-            <iron-collapse id="collapse" opened="{{collapse-open}}">
-                <div class="card-actions">
-                    <template is="dom-repeat" items="[[ticket.comments]]" as="comment">
-                        <tickets-ticket-comment date="[[comment.date]]" author="[[comment.author]]" content="[[comment.content]]"></tickets-ticket-comment>
-                        <hr>
-                    </template>
-                    <template if="[[_hasPermission('ticket_comment_create')]]">
-                        <div class="card-content answer">
-                            <paper-textarea label="Antwort" value="{{answer}}"></paper-textarea>
-                            <paper-button raised on-tap="addComment">Senden</paper-button>
-                        </div>
-                    </template>
-                </div>
-            </iron-collapse>
+			<iron-collapse id="collapse" opened="{{collapse-open}}">
+				<div class="card-actions">
+					<template is="dom-repeat" items="[[ticket.comments]]" as="comment">
+						<tickets-ticket-comment date="[[comment.date]]" author="[[comment.author]]"
+						                        content="[[comment.content]]"></tickets-ticket-comment>
+						<hr>
+					</template>
+					<template is="dom-if" if="[[hasPermission('ticket_comment_create')]]">
+						<div class="card-content answer">
+							<paper-textarea label="Antwort" value="{{answer}}"></paper-textarea>
+							<paper-button raised on-tap="addComment">Senden</paper-button>
+						</div>
+					</template>
+				</div>
+			</iron-collapse>
 
-            <div class="card-actions">
-                <paper-fab id="expand" mini icon="[[_computeFabItem(collapse-open)]]" on-tap="openComments"></paper-fab>
-                <iron-selector selected="[[ticket.status]]" selected-attribute="active" selected-attribute="disabled" attr-for-selected="data-status">
-                    <paper-button toggles on-tap="statusChange" data-status="todo" disabled$="[[isStatus(ticket.status, 'todo')]]">ToDo</paper-button>
-                    <paper-button toggles on-tap="statusChange" data-status="wip" disabled$="[[isStatus(ticket.status, 'wip')]]">WIP</paper-button>
-                    <paper-button toggles on-tap="statusChange" data-status="waiting" disabled$="[[isStatus(ticket.status, 'waiting')]]">Wartet auf Rückmeldung</paper-button>
-                    <paper-button toggles on-tap="statusChange" data-status="ready" disabled$="[[isStatus(ticket.status, 'ready')]]">Erledigt</paper-button>
-                </iron-selector>
-            </div>
+			<div class="card-actions">
+				<paper-fab id="expand" mini icon="[[_computeFabItem(collapse-open)]]" on-tap="openComments"></paper-fab>
+				<iron-selector selected="[[ticket.status]]" selected-attribute="active" selected-attribute="disabled"
+				               attr-for-selected="data-status">
+					<paper-button toggles on-tap="statusChange" data-status="todo"
+					              disabled$="[[isStatus(ticket.status, 'todo')]]">ToDo
+					</paper-button>
+					<paper-button toggles on-tap="statusChange" data-status="wip"
+					              disabled$="[[isStatus(ticket.status, 'wip')]]">WIP
+					</paper-button>
+					<paper-button toggles on-tap="statusChange" data-status="waiting"
+					              disabled$="[[isStatus(ticket.status, 'waiting')]]">Wartet auf Rückmeldung
+					</paper-button>
+					<paper-button toggles on-tap="statusChange" data-status="ready"
+					              disabled$="[[isStatus(ticket.status, 'ready')]]">Erledigt
+					</paper-button>
+				</iron-selector>
+			</div>
 
-            <div class="card-actions">
-                <template is="dom-repeat" items="[[ticket.tags]]" as="tag">
-                    <paper-chip disabled>
-                        <h1>[[tag]]</h1>
-                    </paper-chip>
-                </template>
-                <template is="dom-if" if="[[_hasPermission('ticket_tag_change')]]">
-                    <paper-menu-button ignore-select class="addtag">
-                        <paper-icon-button icon="add" class="dropdown-trigger"></paper-icon-button>
-                        <paper-menu class="dropdown-content" multi attr-for-selected="title" selected-values$='[[ticket.tags]]' on-tap="selectTag" >
-                            <paper-item title="Forum">Forum</paper-item>
-                            <paper-item title="@Admins">@Admins</paper-item>
-                            <paper-item title="Serverliste">Serverliste</paper-item>
-                            <paper-item title="Account">Account</paper-item>
-                            <paper-item title="@Entwicklung">@Entwicklung</paper-item>
-                            <paper-item title="Übertragung">Übertragung</paper-item>
-                            <paper-item title="Verwarnung">Verwarnung</paper-item>
-                            <paper-item title="Frage">Frage</paper-item>
-                            <!--    <template is="dom-repeat" items="[[tags]]" as="tag">
-                                <paper-item name="[[tag]]">[[tag]]</paper-item>
-                            </template>-->
-                        </paper-menu>
-                    </paper-menu-button>
-                </template>
+			<div class="card-actions">
+				<template is="dom-repeat" items="[[ticket.tags]]" as="tag">
+					<paper-chip disabled>
+						<h1>[[tag]]</h1>
+					</paper-chip>
+				</template>
+				<template is="dom-if" if="[[hasPermission('ticket_tag_change')]]">
+					<paper-menu-button ignore-select class="addtag">
+						<paper-icon-button icon="add" class="dropdown-trigger"></paper-icon-button>
+						<paper-menu class="dropdown-content" multi attr-for-selected="title"
+						            selected-values$='[[ticket.tags]]' on-tap="selectTag">
+							<paper-item title="Forum">Forum</paper-item>
+							<paper-item title="@Admins">@Admins</paper-item>
+							<paper-item title="Serverliste">Serverliste</paper-item>
+							<paper-item title="Account">Account</paper-item>
+							<paper-item title="@Entwicklung">@Entwicklung</paper-item>
+							<paper-item title="Übertragung">Übertragung</paper-item>
+							<paper-item title="Verwarnung">Verwarnung</paper-item>
+							<paper-item title="Frage">Frage</paper-item>
+							<!--    <template is="dom-repeat" items="[[tags]]" as="tag">
+								<paper-item name="[[tag]]">[[tag]]</paper-item>
+							</template>-->
+						</paper-menu>
+					</paper-menu-button>
+				</template>
 
-            </div>
-        </paper-card>
-    </template>
-    <script>
-        Polymer({
-            is: 'tickets-ticket',
-            properties: {
-                ticket: {
-                    type: Object,
-                    notify: true
-                }
-                /*    tags: {
-                        type: Array,
-                        value: [
-                            'Wartet auf Rückmeldung',
-                            'Serverliste',
-                            'Forum',
-                            'Account',
-                            'Freischaltung',
-                            '@Admins',
-                            'Übertragung eines Eintrages',
-                            'Entsperrung',
-                            'Einspruch gegen Verwarnung'
-                        ]
-                    }*/
-            },
-            observers: [
-                'commentsChange(ticket.comments.*)'
-            ],
-            isStatus: function(status, test) {
-                return status === test || !this._hasPermission('ticket_status_change');
-            },
-            commentsChange: function() {
-                if(this.ticket.comments){
-                    this.customStyle['--comment-amount'] = '"' + this.ticket.comments.length + '"';
-                }else{
-                    this.customStyle['--comment-amount'] = '""';
-                }
-                this.updateStyles();
-            },
-            statusChange: function(e) {
-                changeStatus(this.ticket._id, e.path[0].dataset.status);
-            },
-            openComments: function() {
-                this.$.collapse.toggle();
-            },
-            addComment: function() {
-                createComment(this.ticket._id, this.answer)
+			</div>
+		</paper-card>
+	</template>
+	<script>
+		Polymer({
+			is: 'tickets-ticket',
+			properties: {
+				ticket: {
+					type: Object,
+					notify: true
+				}
+				/*    tags: {
+				 type: Array,
+				 value: [
+				 'Wartet auf Rückmeldung',
+				 'Serverliste',
+				 'Forum',
+				 'Account',
+				 'Freischaltung',
+				 '@Admins',
+				 'Übertragung eines Eintrages',
+				 'Entsperrung',
+				 'Einspruch gegen Verwarnung'
+				 ]
+				 }*/
+			},
+			observers: [
+				'commentsChange(ticket.comments.*)'
+			],
+			isStatus: function (status, test) {
+				return status === test || !this.hasPermission('ticket_status_change');
+			},
+			commentsChange: function () {
+				if (this.ticket.comments) {
+					this.customStyle['--comment-amount'] = '"' + this.ticket.comments.length + '"';
+				} else {
+					this.customStyle['--comment-amount'] = '""';
+				}
+				this.updateStyles();
+			},
+			statusChange: function (e) {
+				changeStatus(this.ticket._id, e.path[0].dataset.status);
+			},
+			openComments: function () {
+				this.$.collapse.toggle();
+			},
+			addComment: function () {
+				createComment(this.ticket._id, this.answer);
 
-                this.answer = '';
+				this.answer = '';
 
-                this.commentsChange();
-            },
-            _computeDate: function(date) {
-                return (new Date(date)).toLocaleString();
-            },
-            _computeFabItem: function(open) {
-                if (open) {
-                    return 'expand-less';
-                } else {
-                    return 'expand-more';
-                }
-            },
-            _computeProfileUrl: function(uid) {
-                return 'https://minecraft-server.eu/forum/members/' + uid;
-            },
-            _computeAvatarUrl: function(uid) {
-                return 'https://minecraft-server.eu/forum/avatar.php?userid=' + uid + '&size=m';
-            },
-            _hasPermission: function(permission){
-                return app._hasPermission(permission);
-            },
-            selectTag: function(e){
-                var name = e.target.title;
+				this.commentsChange();
+			},
+			_computeDate: function (date) {
+				return (new Date(date)).toLocaleString();
+			},
+			_computeFabItem: function (open) {
+				if (open) {
+					return 'expand-less';
+				} else {
+					return 'expand-more';
+				}
+			},
+			_computeProfileUrl: function (uid) {
+				return 'https://minecraft-server.eu/forum/members/' + uid;
+			},
+			_computeAvatarUrl: function (uid) {
+				return 'https://minecraft-server.eu/forum/avatar.php?userid=' + uid + '&size=m';
+			},
+			hasPermission: function (permission) {
+				return app.hasPermission(permission);
+			},
+			selectTag: function (e) {
+				var name = e.target.title;
 
-                if(!this.ticket.tags){
-                    this.ticket.tags = [];
-                }
+				if (!this.ticket.tags) {
+					this.ticket.tags = [];
+				}
 
-                if (this.ticket.tags.indexOf(name) === -1) {
-                    addTag(this.ticket._id, name);
-                }else{
-                    removeTag(this.ticket._id, name)
-                }
-            }
-        });
-    </script>
+				if (this.ticket.tags.indexOf(name) === -1) {
+					addTag(this.ticket._id, name);
+				} else {
+					removeTag(this.ticket._id, name)
+				}
+			}
+		});
+	</script>
 </dom-module>

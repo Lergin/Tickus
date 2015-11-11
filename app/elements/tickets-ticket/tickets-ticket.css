@@ -1,113 +1,118 @@
 :root {
-    --comment-amount: "";
-    --status-color-waiting: #B0BEC5;
-    --status-color-todo: #FFAB40;
-    --status-color-ready: #69F0AE;
-    --status-color-wip: #E040FB;
-    --paper-chip-secondary-text-color: #333;
-    --paper-input-container-input-color: #333;
-    --paper-input-container-color: #333;
-    --paper-input-container-focus-color: var(--accent-color);
+	--comment-amount: "";
+	--status-color-waiting: #B0BEC5;
+	--status-color-todo: #FFAB40;
+	--status-color-ready: #69F0AE;
+	--status-color-wip: #E040FB;
+	--paper-chip-secondary-text-color: #333;
+	--paper-input-container-input-color: #333;
+	--paper-input-container-color: #333;
+	--paper-input-container-focus-color: var(--accent-color);
 }
 
 paper-button[toggles][active] {
-  background: var(--accent-color);
+	background: var(--accent-color);
 }
+
 paper-button[toggles] {
-    --paper-button-ink-color: var(--accent-color);
+	--paper-button-ink-color: var(--accent-color);
 }
+
 paper-button[toggles][active][disabled] {
-    color: #333;
+	color: #333;
 }
 
 paper-card.waiting {
-    background-color: var(--status-color-waiting);
+	background-color: var(--status-color-waiting);
 }
+
 paper-card.todo {
-    background-color: var(--status-color-todo);
+	background-color: var(--status-color-todo);
 }
+
 paper-card.ready {
-    background-color: var(--status-color-ready);
+	background-color: var(--status-color-ready);
 }
+
 paper-card.wip {
-    background-color: var(--status-color-wip);
+	background-color: var(--status-color-wip);
 }
 
 paper-card {
-    margin-bottom: 20px;
-    width: 100%;
+	margin-bottom: 20px;
+	width: 100%;
 }
 
-paper-fab > ::content iron-icon::before{
-    content: var(--comment-amount);
+paper-fab > ::content iron-icon::before {
+	content: var(--comment-amount);
 }
 
 .avatar {
-    display: inline-block;
-    height: 64px;
-    width: 64px;
-    border-radius: 50%;
-    background: var(--accent-color);
-    color: white;
-    line-height: 64px;
-    font-size: 30px;
-    text-align: center;
+	display: inline-block;
+	height: 64px;
+	width: 64px;
+	border-radius: 50%;
+	background: var(--accent-color);
+	color: white;
+	line-height: 64px;
+	font-size: 30px;
+	text-align: center;
 }
 
 .title a {
-    text-decoration: none;
+	text-decoration: none;
 }
 
 paper-fab {
-    right: 10px;
-    top: -20px;
-    position: absolute;
+	right: 10px;
+	top: -20px;
+	position: absolute;
 }
 
 .title {
-    position: absolute;
-    top: 30px;
-    left: 100px;
-    width: calc(100% - 100px);
+	position: absolute;
+	top: 30px;
+	left: 100px;
+	width: calc(100% - 100px);
 }
 
 .addtag {
-    border-radius: 16px;
-    background-color: var(--accent-color);
-    color: white;
-    display: inline-block;
-    cursor: pointer;
-    margin: 8px 0;
-    width: 32px;
-    height: 32px;
-    line-height: 29px;
-    text-align: center;
-    position: relative;
-    padding: 0;
+	border-radius: 16px;
+	background-color: var(--accent-color);
+	color: white;
+	display: inline-block;
+	cursor: pointer;
+	margin: 8px 0;
+	width: 32px;
+	height: 32px;
+	line-height: 29px;
+	text-align: center;
+	position: relative;
+	padding: 0;
 }
 
 .addtag paper-icon-button {
-    padding: 4px;
-    width: 32px;
-    height: 32px;
+	padding: 4px;
+	width: 32px;
+	height: 32px;
 }
 
 .addtag:hover {
-    font-size: 100;
+	font-size: 100;
 }
 
 .big {
-    font-size: 22px;
+	font-size: 22px;
 }
 
 .answer {
-    display: -webkit-box;
+	display: -webkit-box;
 }
 
 .answer paper-button {
-    background-color: var(--accent-color);
+	background-color: var(--accent-color);
 }
 
 paper-textarea {
-    width: calc(100% - 100px);
+	width: calc(100% - 100px);
 }

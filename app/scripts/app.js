@@ -1,183 +1,184 @@
-var app = document.querySelector( '#app' );
+var app = document.querySelector('#app');
 var socket;
 
-( function ( document ) {
-    app.sortStatus = function ( item, item2 ) {
-        item = getStatusId( item.status );
-        item2 = getStatusId( item2.status );
+(function (document) {
+	app.sortStatus = function (item, item2) {
+		item = getStatusId(item.status);
+		item2 = getStatusId(item2.status);
 
-        return ( item > item2 ? 1 : -1 );
-    }
-    app.sortDate = function ( item, item2 ) {
-        return ( item.date > item2.date ? 1 : -1 );
-    }
+		return ( item > item2 ? 1 : -1 );
+	};
 
-    app.search = '';
-    app.selectedTag = '';
-    app.selectedStatus = '';
+	app.sortDate = function (item, item2) {
+		return ( item.date > item2.date ? 1 : -1 );
+	};
 
-    app.ticketFilter = function ( tag, search, status ) {
-        return function ( item ) {
-            return ( item.title.match( search ) || item.author.name.match( search ) ) &&
-            ( tag === '' || (!(item.tags == undefined) && item.tags.indexOf( tag ) > -1 ) )
-            && (status === '' || status.indexOf(item.status) > -1);
-        }
-    }
+	app.search = '';
+	app.selectedTag = '';
+	app.selectedStatus = '';
 
-    app.computeTicketCount = function(){
-        var i, sum = 0;
-        for (i = 0; i < arguments.length; i++) {
-            sum += arguments[i];
-        }
-        return sum;
-    }
+	app.ticketFilter = function (tag, search, status) {
+		return function (item) {
+			return ( item.title.match(search) || item.author.name.match(search) ) &&
+				( tag === '' || (!(item.tags == undefined) && item.tags.indexOf(tag) > -1 ) )
+				&& (status === '' || status.indexOf(item.status) > -1);
+		}
+	};
 
-    app.addTicket = function() {
-        addTicket(app.new_title, app.new_content);
-    }
+	app.computeTicketCount = function () {
+		var i, sum = 0;
+		for (i = 0; i < arguments.length; i++) {
+			sum += arguments[i];
+		}
+		return sum;
+	};
 
-    app._hasPermission = function(permission) {
-        if(app.user){
-            return app.user.permissions[permission];
-        }
-    }
+	app.addTicket = function () {
+		addTicket(app.new_title, app.new_content);
+	};
 
-    socket = io();
+	app.hasPermission = function (permission) {
+		if (app.user) {
+			console.log(app.user.permissions[permission] + ":" + permission);
+			return app.user.permissions[permission];
+		}
+	};
 
-    app.tickets = [];
-    app.ticketCount = {};
-    var hasInitTickets = false;
+	socket = io();
 
-    socket.on( 'load init tickets', function ( data ) {
-        if(!hasInitTickets){
-            app.push(
-                'tickets',
-                data
-            );
-            setTimeout(function () {
-                hasInitTickets = true;
-            }, 10000);
-        }
-    } );
+	app.tickets = [];
+	app.ticketCount = {};
+	var hasInitTickets = false;
 
-    socket.on( 'ticket', function ( data ) {
-        app.push(
-            'tickets',
-            data
-        );
-    } );
+	socket.on('load init tickets', function (data) {
+		if (!hasInitTickets) {
+			app.push(
+				'tickets',
+				data
+			);
+			setTimeout(function () {
+				hasInitTickets = true;
+			}, 10000);
+		}
+	});
 
-    socket.on( 'account info', function ( data ) {
-        app.user = data;
-        console.log(data);
-    } );
+	socket.on('ticket', function (data) {
+		app.push(
+			'tickets',
+			data
+		);
+	});
 
-    socket.on( 'ticketCount', function ( status, amount ) {
-        app.set('ticketCount.' + status, amount);
-    } );
+	socket.on('account info', function (data) {
+		app.user = data;
+	});
 
-    socket.on( 'new comment', function ( data ) {
-        var i;
-        for ( i in app.tickets ) {
-            if ( app.tickets[ i ]._id == data.id ) {
-                app.push( "tickets." + i + ".comments", data.comment );
-                break;
-            }
-        }
-    } );
+	socket.on('ticketCount', function (status, amount) {
+		app.set('ticketCount.' + status, amount);
+	});
 
-    socket.on( 'change status', function ( data ) {
-        var i;
-        for ( i in app.tickets ) {
-            if ( app.tickets[ i ]._id == data.id ) {
-                app.set('ticketCount.' + data.status, app.ticketCount[data.status] + 1);
-                app.set('ticketCount.' + app.tickets[i].status, app.ticketCount[app.tickets[i].status] - 1);
-                app.set( "tickets." + i + ".status", data.status );
-                break;
-            }
-        }
-    } );
+	socket.on('new comment', function (data) {
+		var i;
+		for (i in app.tickets) {
+			if (app.tickets[i]._id == data.id) {
+				app.push("tickets." + i + ".comments", data.comment);
+				break;
+			}
+		}
+	});
 
-    socket.on( 'add tag', function ( data ) {
-        var i;
-        for ( i in app.tickets ) {
-            if ( app.tickets[ i ]._id === data.id ) {
-                if(!app.tickets[ i ].tags){
-                    app.tickets[ i ].tags = [];
-                }
+	socket.on('change status', function (data) {
+		var i;
+		for (i in app.tickets) {
+			if (app.tickets[i]._id == data.id) {
+				app.set('ticketCount.' + data.status, app.ticketCount[data.status] + 1);
+				app.set('ticketCount.' + app.tickets[i].status, app.ticketCount[app.tickets[i].status] - 1);
+				app.set("tickets." + i + ".status", data.status);
+				break;
+			}
+		}
+	});
 
-                app.push( 'tickets.' + i + '.tags', data.tag );
-                break;
-            }
-        }
-    } );
+	socket.on('add tag', function (data) {
+		var i;
+		for (i in app.tickets) {
+			if (app.tickets[i]._id === data.id) {
+				if (!app.tickets[i].tags) {
+					app.tickets[i].tags = [];
+				}
 
-    socket.on( 'remove tag', function ( data ) {
-        var i;
-        for ( i in app.tickets ) {
-            if ( app.tickets[ i ]._id === data.id ) {
-                app.splice(
-                    "tickets." + i + ".tags",
-                    app.tickets[ i ].tags.indexOf( data.tag ),
-                    1
-                );
-                break;
-            }
-        }
-    } );
+				app.push('tickets.' + i + '.tags', data.tag);
+				break;
+			}
+		}
+	});
 
-
-} )( document );
+	socket.on('remove tag', function (data) {
+		var i;
+		for (i in app.tickets) {
+			if (app.tickets[i]._id === data.id) {
+				app.splice(
+					"tickets." + i + ".tags",
+					app.tickets[i].tags.indexOf(data.tag),
+					1
+				);
+				break;
+			}
+		}
+	});
 
 
-addTicket = function ( title, content ) {
-    socket.emit( 'new ticket', {
-        title: title,
-        content: content
-    } );
+})(document);
 
-    app.page = "view"
-}
 
-createComment = function ( ticketid, comment ) {
-    socket.emit( 'new comment', {
-        id: ticketid,
-        comment: comment
-    } );
-}
+addTicket = function (title, content) {
+	socket.emit('new ticket', {
+		title: title,
+		content: content
+	});
 
-changeStatus = function ( ticketid, status ) {
-    socket.emit( 'change status', {
-        id: ticketid,
-        status: status
-    } );
-}
+	app.page = "view"
+};
 
-addTag = function ( ticketid, tag ) {
-    socket.emit( 'add tag', {
-        id: ticketid,
-        tag: tag
-    } );
-}
+createComment = function (ticketid, comment) {
+	socket.emit('new comment', {
+		id: ticketid,
+		comment: comment
+	});
+};
 
-removeTag = function ( ticketid, tag ) {
-    socket.emit( 'remove tag', {
-        id: ticketid,
-        tag: tag
-    } );
-}
+changeStatus = function (ticketid, status) {
+	socket.emit('change status', {
+		id: ticketid,
+		status: status
+	});
+};
 
-getStatusId = function ( status ) {
-    switch ( status ) {
-    case "todo":
-        return 0;
-    case "wip":
-        return 1;
-    case "waiting":
-        return 2;
-    case "ready":
-        return 3;
-    default:
-        return 4;
-    }
-}
+addTag = function (ticketid, tag) {
+	socket.emit('add tag', {
+		id: ticketid,
+		tag: tag
+	});
+};
+
+removeTag = function (ticketid, tag) {
+	socket.emit('remove tag', {
+		id: ticketid,
+		tag: tag
+	});
+};
+
+getStatusId = function (status) {
+	switch (status) {
+		case "todo":
+			return 0;
+		case "wip":
+			return 1;
+		case "waiting":
+			return 2;
+		case "ready":
+			return 3;
+		default:
+			return 4;
+	}
+};

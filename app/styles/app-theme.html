@@ -1,74 +1,76 @@
 <style is="custom-style">
-    :root {
-        --dark-primary-color: #1976D2;
-        --default-primary-color: #2196F3;
-        --light-primary-color: #BBDEFB;
-        --text-primary-color: #FFFFFF;
-        --accent-color: #FFC107;
-        --primary-background-color: #BBDEFB;
-        --primary-text-color: #212121;
-        --secondary-text-color: #727272;
-        --disabled-text-color: #BDBDBD;
-        --divider-color: #B6B6B6;
+	:root {
+		--dark-primary-color: #1976D2;
+		--default-primary-color: #2196F3;
+		--light-primary-color: #BBDEFB;
+		--text-primary-color: #FFFFFF;
+		--accent-color: #FFC107;
+		--primary-background-color: #BBDEFB;
+		--primary-text-color: #212121;
+		--secondary-text-color: #727272;
+		--disabled-text-color: #BDBDBD;
+		--divider-color: #B6B6B6;
 
-        --drawer-menu-color: #ffffff;
-        --drawer-border-color: 1px solid #ccc;
-        --drawer-toolbar-border-color: 1px solid rgba(0, 0, 0, 0.22);
+		--drawer-menu-color: #ffffff;
+		--drawer-border-color: 1px solid #ccc;
+		--drawer-toolbar-border-color: 1px solid rgba(0, 0, 0, 0.22);
 
-        --paper-menu-background-color: #fff;
-        --menu-link-color: #111111;
+		--paper-menu-background-color: #fff;
+		--menu-link-color: #111111;
 
-        --paper-input-container-color: rgba(255, 255, 255, 0.64);
-        --paper-input-container-focus-color: rgba(255, 255, 255, 1);
-        --paper-input-container-input-color: #fff;
-    }
+		--paper-input-container-color: rgba(255, 255, 255, 0.64);
+		--paper-input-container-focus-color: rgba(255, 255, 255, 1);
+		--paper-input-container-input-color: #fff;
+	}
 
-    #addTicket paper-input{
-        --paper-input-container-input-color: #333;
-        --paper-input-container-color: #333;
-        --paper-input-container-focus-color: var(--accent-color);
-    }
-    #addTicket paper-textarea{
-        --paper-input-container-input-color: #333;
-        --paper-input-container-color: #333;
-        --paper-input-container-focus-color: var(--accent-color);
-    }
+	#addTicket paper-input {
+		--paper-input-container-input-color: #333;
+		--paper-input-container-color: #333;
+		--paper-input-container-focus-color: var(--accent-color);
+	}
 
-    .paper-menu > .iron-selected {
-        background-color: var(--primary-background-color);
-    }
+	#addTicket paper-textarea {
+		--paper-input-container-input-color: #333;
+		--paper-input-container-color: #333;
+		--paper-input-container-focus-color: var(--accent-color);
+	}
 
-    @media (max-width: 980px) {
-        #mainToolbar .bottom {
-            display: none
-        }
-        #mainToolbar .middle {
-            display: none
-        }
-    }
+	.paper-menu > .iron-selected {
+		background-color: var(--primary-background-color);
+	}
 
-    @media (min-width: 601px) {
-        paper-toolbar iron-pages {
-            padding: 0px 0px;
-        }
-    }
+	@media (max-width: 980px) {
+		#mainToolbar .bottom {
+			display: none
+		}
 
-    [warning] {
-        background-color: var(--primary-background-color)
-    }
+		#mainToolbar .middle {
+			display: none
+		}
+	}
 
-    paper-material {
-        width: auto;
-        display: flex;
-    }
+	@media (min-width: 601px) {
+		paper-toolbar iron-pages {
+			padding: 0px 0px;
+		}
+	}
 
-    .badge {
-        margin-right: 33px;
-        background-color: var(--accent-color);
-        border-radius: 16px;
-        width: 32px;
-        height: 32px;
-        text-align: center;
-        line-height: 32px;
-    }
+	[warning] {
+		background-color: var(--primary-background-color)
+	}
+
+	paper-material {
+		width: auto;
+		display: flex;
+	}
+
+	.badge {
+		margin-right: 33px;
+		background-color: var(--accent-color);
+		border-radius: 16px;
+		width: 32px;
+		height: 32px;
+		text-align: center;
+		line-height: 32px;
+	}
 </style>

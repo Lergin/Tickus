@@ -1,24 +1,24 @@
-var conf = require( '../config.json' ),
-    logger = require( 'winston' ),
-    loggerDB = require( 'winston-mongodb' ).MongoDB;
+var conf = require('../config.json'),
+	logger = require('winston'),
+	loggerDB = require('winston-mongodb').MongoDB;
 
 logger.exitOnError = true;
 
 logger.add(
-    logger.transports.File,
-    conf.logger.file
+	logger.transports.File,
+	conf.logger.file
 );
 
 logger.remove(logger.transports.Console);
 
 logger.add(
-    logger.transports.Console,
-    conf.logger.console
+	logger.transports.Console,
+	conf.logger.console
 );
 
 logger.add(
-    loggerDB,
-    conf.logger.mongodb
+	loggerDB,
+	conf.logger.mongodb
 );
 
 module.exports = logger;

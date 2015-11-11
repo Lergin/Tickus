@@ -3,169 +3,176 @@
 <html lang="">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Ticketsystem</title>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Tickus</title>
 
-    <meta name="theme-color" content="#2E3AA1">
+	<meta name="theme-color" content="#2E3AA1">
 
-    <link rel="manifest" href="manifest.json">
+	<link rel="manifest" href="manifest.json">
 
-    <meta name="msapplication-TileColor" content="#3372DF">
+	<meta name="msapplication-TileColor" content="#3372DF">
 
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Tickets">
-    <link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon-192x192.png">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="application-name" content="Tickets">
+	<link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon-192x192.png">
 
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="Ticketsystem">
-    <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-title" content="Tickus">
+	<link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
 
-    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+	<meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
 
-    <link rel="stylesheet" href="styles/main.css">
+	<link rel="stylesheet" href="styles/main.css">
 
-    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+	<script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
 
-    <link rel="import" href="elements/elements.html">
+	<link rel="import" href="elements/elements.html">
 
-    <style is="custom-style" include="shared-styles"></style>
+	<style is="custom-style" include="shared-styles"></style>
 
-    <novulcscript src="/socket.io/socket.io.js"></novulcscript>
+	<novulcscript src="/socket.io/socket.io.js"></novulcscript>
 </head>
 
 <body unresolved class="fullbleed layout vertical">
-    <template is="dom-bind" id="app">
+<template is="dom-bind" id="app">
 
-        <paper-drawer-panel id="paperDrawerPanel">
-            <paper-scroll-header-panel drawer fixed>
+	<paper-drawer-panel id="paperDrawerPanel">
+		<paper-scroll-header-panel drawer fixed>
 
-                <paper-toolbar id="drawerToolbar">
-                    <span class="paper-font-title">Ticketsystem</span>
-                </paper-toolbar>
+			<paper-toolbar id="drawerToolbar">
+				<span class="paper-font-title">Ticketsystem</span>
+			</paper-toolbar>
 
-                <paper-menu class="list" attr-for-selected="data-route" selected="[[route]]">
-                    <template is="dom-if" if="_hasPermission('ticket_create')">
-                        <a data-route="addTickets" href="/" on-click="onDataRouteClick">
-                            <span>Ticket hinzufügen</span>
-                        </a>
-                    </template>
+			<paper-menu class="list" attr-for-selected="data-route" selected="[[route]]">
+				<template is="dom-if" if="hasPermission('ticket_create')">
+					<a data-route="addTickets" href="/" on-click="onDataRouteClick">
+						<span>Ticket hinzufügen</span>
+					</a>
+				</template>
 
-                    <a data-route="openTickets" href="/open" on-click="onDataRouteClick">
-                        <span class="badge">[[computeTicketCount(ticketCount.todo, ticketCount.wip, ticketCount.waiting)]]</span>
-                        <span>offene Tickets</span>
-                    </a>
+				<a data-route="openTickets" href="/open" on-click="onDataRouteClick">
+					<span class="badge">[[computeTicketCount(ticketCount.todo, ticketCount.wip, ticketCount.waiting)]]</span>
+					<span>offene Tickets</span>
+				</a>
 
-                    <a data-route="todoTickets" href="/todo" on-click="onDataRouteClick">
-                        <span class="badge">[[ticketCount.todo]]</span>
-                        <span>zu bearbeitende Tickets</span>
-                    </a>
+				<a data-route="todoTickets" href="/todo" on-click="onDataRouteClick">
+					<span class="badge">[[ticketCount.todo]]</span>
+					<span>zu bearbeitende Tickets</span>
+				</a>
 
-                    <a data-route="wipTickets" href="/wip" on-click="onDataRouteClick">
-                        <span class="badge">[[ticketCount.wip]]</span>
-                        <span>in Bearbeitung</span>
-                    </a>
+				<a data-route="wipTickets" href="/wip" on-click="onDataRouteClick">
+					<span class="badge">[[ticketCount.wip]]</span>
+					<span>in Bearbeitung</span>
+				</a>
 
-                    <a data-route="waitingTickets" href="/waiting" on-click="onDataRouteClick">
-                        <span class="badge">[[ticketCount.waiting]]</span>
-                        <span>warten auf Rückmeldung</span>
-                    </a>
+				<a data-route="waitingTickets" href="/waiting" on-click="onDataRouteClick">
+					<span class="badge">[[ticketCount.waiting]]</span>
+					<span>warten auf Rückmeldung</span>
+				</a>
 
-                    <a data-route="readyTickets" href="/ready" on-click="onDataRouteClick">
-                        <span class="badge">[[ticketCount.ready]]</span>
-                        <span>bearbeitet Tickets</span>
-                    </a>
+				<a data-route="readyTickets" href="/ready" on-click="onDataRouteClick">
+					<span class="badge">[[ticketCount.ready]]</span>
+					<span>bearbeitet Tickets</span>
+				</a>
 
-                    <a data-route="allTickets" href="/all" on-click="onDataRouteClick">
-                        <span class="badge">{{computeTicketCount(ticketCount.todo, ticketCount.wip, ticketCount.waiting, ticketCount.ready)}}</span>
-                        <span>Alle Tickets</span>
-                    </a>
-                </paper-menu>
-            </paper-scroll-header-panel>
+				<a data-route="allTickets" href="/all" on-click="onDataRouteClick">
+					<span class="badge">{{computeTicketCount(ticketCount.todo, ticketCount.wip, ticketCount.waiting, ticketCount.ready)}}</span>
+					<span>Alle Tickets</span>
+				</a>
+			</paper-menu>
+		</paper-scroll-header-panel>
 
-            <paper-scroll-header-panel main condenses keep-condensed-header>
+		<paper-scroll-header-panel main condenses keep-condensed-header>
 
-                <paper-toolbar id="mainToolbar" class="tall">
-                    <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
-                    <span class="flex"></span>
+			<paper-toolbar id="mainToolbar" class="tall">
+				<paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+				<span class="flex"></span>
 
-                    <paper-input label="Search" value="{{search}}">
-                        <iron-icon icon="search" prefix></iron-icon>
-                    </paper-input>
+				<paper-input label="Search" value="{{search}}">
+					<iron-icon icon="search" prefix></iron-icon>
+				</paper-input>
 
-                    <paper-dropdown-menu label="Tag Filter">
-                        <paper-menu class="dropdown-content" attr-for-selected="title" selected="{{selectedTag}}">
-                            <paper-item title="">All</paper-item>
-                            <paper-item title="Forum">Forum</paper-item>
-                            <paper-item title="@Admins">@Admins</paper-item>
-                            <paper-item title="Serverliste">Serverliste</paper-item>
-                            <paper-item title="Account">Account</paper-item>
-                            <paper-item title="@Entwicklung">@Entwicklung</paper-item>
-                            <paper-item title="Übertragung">Übertragung</paper-item>
-                            <paper-item title="Verwarnung">Verwarnung</paper-item>
-                            <paper-item title="Frage">Frage</paper-item>
-                            <!--    <template is="dom-repeat" items="[[tags]]" as="tag">
-                                <paper-item name="[[tag]]">[[tag]]</paper-item>
-                            </template>-->
-                        </paper-menu>
-                    </paper-dropdown-menu>
+				<paper-dropdown-menu label="Tag Filter">
+					<paper-menu class="dropdown-content" attr-for-selected="title" selected="{{selectedTag}}">
+						<paper-item title="">All</paper-item>
+						<paper-item title="Forum">Forum</paper-item>
+						<paper-item title="@Admins">@Admins</paper-item>
+						<paper-item title="Serverliste">Serverliste</paper-item>
+						<paper-item title="Account">Account</paper-item>
+						<paper-item title="@Entwicklung">@Entwicklung</paper-item>
+						<paper-item title="Übertragung">Übertragung</paper-item>
+						<paper-item title="Verwarnung">Verwarnung</paper-item>
+						<paper-item title="Frage">Frage</paper-item>
+						<!--    <template is="dom-repeat" items="[[tags]]" as="tag">
+							<paper-item name="[[tag]]">[[tag]]</paper-item>
+						</template>-->
+					</paper-menu>
+				</paper-dropdown-menu>
 
-                    <div class="middle middle-container center horizontal layout">
-                        <iron-pages header attr-for-selected="data-route" selected="{{route}}">
-                            <div data-route="openTickets" class="app-name">offene Tickets</div>
-                            <div data-route="todoTickets" class="app-name">zu bearbeitende Tickets</div>
-                            <div data-route="wipTickets" class="app-name">in Bearbeitung</div>
-                            <div data-route="waitingTickets" class="app-name">warten auf Rückmeldung</div>
-                            <div data-route="readyTickets" class="app-name">bearbeitet Tickets</div>
-                            <div data-route="allTickets" class="app-name">alle Tickets</div>
-                            <div data-route="addTicket" class="app-name">Ticket hinzufügen</div>
-                        </iron-pages>
-                    </div>
+				<div class="middle middle-container center horizontal layout">
+					<iron-pages header attr-for-selected="data-route" selected="{{route}}">
+						<div data-route="openTickets" class="app-name">offene Tickets</div>
+						<div data-route="todoTickets" class="app-name">zu bearbeitende Tickets</div>
+						<div data-route="wipTickets" class="app-name">in Bearbeitung</div>
+						<div data-route="waitingTickets" class="app-name">warten auf Rückmeldung</div>
+						<div data-route="readyTickets" class="app-name">bearbeitet Tickets</div>
+						<div data-route="allTickets" class="app-name">alle Tickets</div>
+						<div data-route="addTicket" class="app-name">Ticket hinzufügen</div>
+					</iron-pages>
+				</div>
 
-                    <div class="bottom bottom-container center horizontal layout">
-                        <div class="bottom-title paper-font-subhead">Erstelle ein Ticket und dir wird geholfen (hoffentlich)</div>
-                    </div>
+				<div class="bottom bottom-container center horizontal layout">
+					<div class="bottom-title paper-font-subhead">Erstelle ein Ticket und dir wird geholfen
+						(hoffentlich)
+					</div>
+				</div>
 
-                </paper-toolbar>
+			</paper-toolbar>
 
-                <div class="content">
-                    <iron-pages selected="{{page}}" attr-for-selected="type">
-                        <section type="view">
-                            <template id="ticketsTemplate" is="dom-repeat" items="{{tickets}}" as="ticket"
-                            filter="{{ticketFilter(selectedTag, search, selectedStatus)}}" sort="sortDate" observe="tags status">
-                                <tickets-ticket ticket="{{ticket}}"></tickets-ticket>
-                            </template>
-                        </section>
+			<div class="content">
+				<iron-pages selected="{{page}}" attr-for-selected="type">
+					<section type="view">
+						<template id="ticketsTemplate" is="dom-repeat" items="{{tickets}}" as="ticket"
+						          filter="{{ticketFilter(selectedTag, search, selectedStatus)}}" sort="sortDate"
+						          observe="tags status">
+							<tickets-ticket ticket="{{ticket}}"></tickets-ticket>
+						</template>
+					</section>
 
-                        <section id="addTicket" type="add">
-                            <paper-card style="width:100%">
-                                <template is="dom-if" if="[[_hasPermission('comment_create')]]">
-                                    <div class="card-content">
-                                        <paper-input label="Title" value="{{new_title}}" char-counter auto-validate minlength="6" maxlength="50" error-message="6-20 Zeichen"></paper-input>
-                                        <paper-textarea label="Content" value="{{new_content}}" char-counter auto-validate rows="10" minlength="100" error-message="min. 100 Zeichen"></paper-textarea>
-                                    </div>
+					<section id="addTicket" type="add">
+						<paper-card style="width:100%">
+							<template is="dom-if" if="[[hasPermission('comment_create')]]">
+								<div class="card-content">
+									<paper-input label="Title" value="{{new_title}}" char-counter auto-validate
+									             minlength="6" maxlength="50"
+									             error-message="6-20 Zeichen"></paper-input>
+									<paper-textarea label="Content" value="{{new_content}}" char-counter auto-validate
+									                rows="10" minlength="100"
+									                error-message="min. 100 Zeichen"></paper-textarea>
+								</div>
 
-                                    <div class="card-actions">
-                                        <paper-button on-tap="addTicket">Hinzufügen</paper-button>
-                                    </div>
-                                </template>
+								<div class="card-actions">
+									<paper-button on-tap="addTicket">Hinzufügen</paper-button>
+								</div>
+							</template>
 
-                                <template is="dom-if" if="[[!_hasPermission('comment_create')]]">
-                                    Not enought rights
-                                </template>
-                            </paper-card>
-                        </section>
-                    </iron-pages>
-                </div>
-            </paper-scroll-header-panel>
-        </paper-drawer-panel>
+							<template is="dom-if" if="[[!hasPermission('comment_create')]]">
+								Not enought rights
+							</template>
+						</paper-card>
+					</section>
+				</iron-pages>
+			</div>
+		</paper-scroll-header-panel>
+	</paper-drawer-panel>
 
-    </template>
+</template>
 
-    <script src="scripts/app.js"></script>
-    <script src="scripts/app-bsd.js"></script>
+<script src="scripts/app.js"></script>
+<script src="scripts/app-bsd.js"></script>
 </body>
 
 </html>

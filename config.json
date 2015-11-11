@@ -1,52 +1,53 @@
 {
-    "port": 4000,
-    "mongodb": {
-        "url": "mongodb://localhost:27017/ticketsystem",
-        "collections": {
-            "tickets": "tickets",
-            "user": "user"
-        }
-    },
-    "logger": {
-        "file": {
-            "filename": "logs/ticketsystem.log",
-            "level": "verbose",
-            "handleExceptions": true,
-            "humanReadableUnhandledException": true,
-            "zippedArchive": true,
-            "silent": true
-        },
-        "console": {
-            "level": "debug",
-            "colorize": true,
-            "timestamp": true,
-            "handleExceptions": true,
-            "humanReadableUnhandledException": true
-        },
-        "mongodb": {
-            "level": "verbose",
-            "db": "mongodb://localhost:27017/ticketsystem"
-        }
-    },
-    "groups": {
-        "User": {
-            "ticket_view_own": true,
-            "ticket_create": true
-        },
-        "Admin": {
-            "ticket_create": true,
-            "ticket_comment_create": true,
-            "ticket_status_change": true,
-            "ticket_tag_change": true,
-            "ticket_view_all": true,
-            "ticket_view_own": true,
-            "user_add": true
-        }
-    },
-    "status": [
-        "todo",
-        "wip",
-        "waiting",
-        "ready"
-    ]
+	"port": 4000,
+	"mongodb": {
+		"url": "mongodb://localhost:27017/ticketsystem",
+		"collections": {
+			"tickets": "tickets",
+			"user": "user"
+		}
+	},
+	"logger": {
+		"file": {
+			"filename": "logs/ticketsystem.log",
+			"level": "verbose",
+			"handleExceptions": true,
+			"humanReadableUnhandledException": true,
+			"zippedArchive": true,
+			"silent": true
+		},
+		"console": {
+			"level": "debug",
+			"colorize": true,
+			"timestamp": true,
+			"handleExceptions": true,
+			"humanReadableUnhandledException": true
+		},
+		"mongodb": {
+			"level": "verbose",
+			"db": "mongodb://localhost:27017/ticketsystem"
+		}
+	},
+	"groups": {
+		"User": {
+			"ticket_view_own": true,
+			"ticket_comment_create": true,
+			"ticket_create": true
+		},
+		"Admin": {
+			"ticket_create": true,
+			"ticket_comment_create": true,
+			"ticket_status_change": true,
+			"ticket_tag_change": true,
+			"ticket_view_all": true,
+			"ticket_view_own": true,
+			"user_add": true
+		}
+	},
+	"status": [
+		"todo",
+		"wip",
+		"waiting",
+		"ready"
+	]
 }
